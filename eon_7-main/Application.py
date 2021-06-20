@@ -2,10 +2,12 @@ import os
 from Book import Book 
 from common import input_int 
 from common import tryinput_int 
+
 class Application: 
     def __init__(self): 
         self.genres= list() 
         self.books = list() 
+        
     def Run(self): 
         self.Load() 
         while True: 
@@ -28,6 +30,7 @@ class Application:
                 print("잘못 선택하였습니다.") 
             input("엔터 키를 누르세요.") 
         self.Save() 
+
     def Load(self): 
         print("===Load===") 
         try: 
@@ -36,6 +39,7 @@ class Application:
         except: 
             print("환영합니다.") 
         input("엔터 키를 누르세요.")  
+
     def SelectMenu(self): 
         os.system("cls") 
         print("== 도서 관리 프로그램 ==") 
@@ -50,16 +54,19 @@ class Application:
         print("5:도서 수정") 
         print("6:전체 보기")
         return input("\n메뉴 입력 ◀:") 
+
     def AddGenre(self): 
         print("===장르 추가===") 
         self.ViewGenres() 
         genre = input("추가할 장르 명:") 
         self.genres.append(genre) 
+
     def ViewGenres(self): 
         sz = len(self.genres) 
         for i in range(0,sz): 
             print("{0}:{1}".format(i+1, self.genres[i]),end=' ') 
         print() 
+
     def AddBook(self): 
         print("===도서 추가===")
         gn = self.SelectGenre()#장르를 선택한다. 
@@ -112,22 +119,29 @@ class Application:
         f.close()
 
         f = open("C:/Users/dlqqj/OneDrive/바탕 화면/eon_7-main/eon_7-main/input.txt", 'a',encoding ='UTF-8')
-        f.write(author)
+        f.write(' '+author)
         f.close()
 
         f = open("C:/Users/dlqqj/OneDrive/바탕 화면/eon_7-main/eon_7-main/input.txt", 'a',encoding ='UTF-8')
-        f.write(year)
+        f.write(' '+year)
         f.close() 
 
         f = open("C:/Users/dlqqj/OneDrive/바탕 화면/eon_7-main/eon_7-main/input.txt", 'a',encoding ='UTF-8')
-        f.write(publisher)
+        f.write(' '+publisher)
         f.close()
-         
         return Book(year,title,gn,author,publisher) 
+
     def RemoveBook(self): 
         print("===도서 삭제===") 
         title = input("도서명:") 
         book =self.Find(title) 
+        with open('C:/Users/dlqqj/OneDrive/바탕 화면/eon_7-main/eon_7-main/input.txt',"r",encoding ='UTF-8') as inf:
+            lines = inf.readlines()
+        with open("C:/Users/dlqqj/OneDrive/바탕 화면/eon_7-main/eon_7-main/input.txt","w",encoding ='UTF-8') as outf:
+            for line in lines:
+                if not line.startswith(title):
+                    outf.write(line)
+        print("삭제되었습니다. \n")
         if book == None: 
             print("존재하지 않는 도서입니다.") 
             return 
@@ -158,41 +172,173 @@ class Application:
         print("===도서 검색===") 
         title = input("도서명:")
         book =self.Find(title) 
+        with open('C:/Users/dlqqj/OneDrive/바탕 화면/eon_7-main/eon_7-main/input.txt',encoding ='UTF-8') as f:
+            lines = f.readlines()
+            for line in lines:
+                if title in line:
+                    print(line)
+        f.close()
         if book == None: 
             print("존재하지 않는 도서입니다.") 
             return 
-        self.ViewBook(book) 
+        # self.ViewBook(book) 
 
     def Findyear(self):
         print("===도서 검색===") 
         year = input("출판연도:") 
         book =self.Find_year(year) 
+        with open('C:/Users/dlqqj/OneDrive/바탕 화면/eon_7-main/eon_7-main/input.txt',encoding ='UTF-8') as f:
+            lines = f.readlines()
+            for line in lines:
+                if year in line:
+                    print(line)
+        f.close()
         if book == None: 
             print("존재하지 않는 도서입니다.") 
             return 
-        self.ViewBook(book) 
+        # self.ViewBook(book) 
 
     def Findauthor(self):
         print("===도서 검색===") 
         author = input("저자:") 
         book =self.Find_author(author) 
+        with open('C:/Users/dlqqj/OneDrive/바탕 화면/eon_7-main/eon_7-main/input.txt',encoding ='UTF-8') as f:
+            lines = f.readlines()
+            for line in lines:
+                if author in line:
+                    print(line)
+        f.close()
         if book == None: 
             print("존재하지 않는 도서입니다.") 
             return 
-        self.ViewBook(book) 
+        # self.ViewBook(book) 
 
     def Findpublisher(self):
         print("===도서 검색===") 
         publisher = input("출판사:") 
         book =self.Find_publisher(publisher) 
+        with open('C:/Users/dlqqj/OneDrive/바탕 화면/eon_7-main/eon_7-main/input.txt',encoding ='UTF-8') as f:
+            lines = f.readlines()
+            for line in lines:
+                if publisher in line:
+                    print(line)
+        f.close()
         if book == None: 
             print("존재하지 않는 도서입니다.") 
             return 
-        self.ViewBook(book) 
+        # self.ViewBook(book) 
 
-    def CorrectBook(self):
-        print("===도서 수정===")
+    def CorrectBook(self): 
+        print("===도서 수정===") 
+        print("1:도서명 수정") 
+        print("2:출판연도 수정") 
+        print("3:저자 수정")
+        print("4:출판사 수정")  
+        self.option=int(input("\n수정할 것을 입력하세요 ◀:"))
+        if self.option== 1:
+            self.Correcttitle()
+        elif self.option== 2:
+            self.Correctyear()
+        elif self.option== 3:
+            self.Correctauthor()
+        elif self.option== 4:
+            self.Correctpublisher()
+        else:
+            print("잘못 선택하였습니다.") 
+        input("엔터 키를 누르세요.") 
         
+    def Correcttitle(self):
+        print("===도서 수정===") 
+        new_text = " "
+        title = input("도서명:")
+        New_title = input("수정할 도서명:")
+        with open("C:/Users/dlqqj/OneDrive/바탕 화면/eon_7-main/eon_7-main/input.txt","r",encoding ='UTF-8') as f:
+            lines = f.readlines() 
+            for i, l in enumerate(lines):
+                new_string = l.strip().replace(title, New_title) 
+                if new_string: 
+                    new_text += new_string + "\n"
+                else: 
+                    new_text += "\n" 
+        with open("C:/Users/dlqqj/OneDrive/바탕 화면/eon_7-main/eon_7-main/input.txt","w",encoding ='UTF-8') as f:
+            f.write(new_text)
+            f.close()
+        print("수정되었습니다. \n")
+        book =self.Find(title) 
+        if book == None: 
+            print("존재하지 않는 도서입니다.") 
+            return 
+        # self.ViewBook(book) 
+
+    def Correctyear(self):
+        print("===도서 수정===") 
+        new_text = " "
+        year = input("출판연도:") 
+        New_year = input("수정할 출판연도:")
+        with open("C:/Users/dlqqj/OneDrive/바탕 화면/eon_7-main/eon_7-main/input.txt","r",encoding ='UTF-8') as f:
+            lines = f.readlines() 
+            for i, l in enumerate(lines):
+                new_string = l.strip().replace(year, New_year) 
+                if new_string: 
+                    new_text += new_string + "\n"
+                else: 
+                    new_text += "\n" 
+        with open("C:/Users/dlqqj/OneDrive/바탕 화면/eon_7-main/eon_7-main/input.txt","w",encoding ='UTF-8') as f:
+            f.write(new_text)
+            f.close()
+        print("수정되었습니다. \n")
+        book =self.Find(year)  
+        if book == None: 
+            print("존재하지 않는 도서입니다.") 
+            return 
+        # self.ViewBook(book) 
+
+    def Correctauthor(self):
+        print("===도서 수정===") 
+        new_text = " "
+        author = input("저자:") 
+        New_author = input("수정할 저자:")
+        with open("C:/Users/dlqqj/OneDrive/바탕 화면/eon_7-main/eon_7-main/input.txt","r",encoding ='UTF-8') as f:
+            lines = f.readlines() 
+            for i, l in enumerate(lines):
+                new_string = l.strip().replace(author, New_author) 
+                if new_string: 
+                    new_text += new_string + "\n"
+                else: 
+                    new_text += "\n" 
+        with open("C:/Users/dlqqj/OneDrive/바탕 화면/eon_7-main/eon_7-main/input.txt","w",encoding ='UTF-8') as f:
+            f.write(new_text)
+            f.close()
+        print("수정되었습니다. \n") 
+        book =self.Find(author)
+        if book == None: 
+            print("존재하지 않는 도서입니다.") 
+            return 
+        # self.ViewBook(book) 
+
+    def Correctpublisher(self):
+        print("===도서 수정===") 
+        new_text = " "
+        publisher = input("출판사:") 
+        New_publisher = input("수정할 출판사:")
+        with open("C:/Users/dlqqj/OneDrive/바탕 화면/eon_7-main/eon_7-main/input.txt","r",encoding ='UTF-8') as f:
+            lines = f.readlines() 
+            for i, l in enumerate(lines):
+                new_string = l.strip().replace(publisher, New_publisher) 
+                if new_string: 
+                    new_text += new_string + "\n"
+                else: 
+                    new_text += "\n" 
+        with open("C:/Users/dlqqj/OneDrive/바탕 화면/eon_7-main/eon_7-main/input.txt","w",encoding ='UTF-8') as f:
+            f.write(new_text)
+            f.close()
+        print("수정되었습니다. \n") 
+        book =self.Find(publisher) 
+        if book == None: 
+            print("존재하지 않는 도서입니다.") 
+            return 
+        # self.ViewBook(book) 
+
     def ViewAll(self): 
         print("===전체 보기===") 
         f = open("C:/Users/dlqqj/OneDrive/바탕 화면/eon_7-main/eon_7-main/input.txt", 'r',encoding ='UTF-8')
